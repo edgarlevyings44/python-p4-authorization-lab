@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="0.731" timestamp="2023-12-12T16:57:05.372248" hostname="levy-thinkpad-x1-yoga-8th"><testcase classname="" name="Flask API in app.py allows logged in users to access member-only article index at .members_only_articles." time="0.126"><failure message="assert 200 == 401&#10; +  where 200 = &lt;WrapperTestResponse streamed [200 OK]&gt;.status_code">self = &lt;app_test.TestApp object at 0x7fbd733d5430&gt;
+
+    def test_can_only_access_member_only_while_logged_in(self):
+        '''allows logged in users to access member-only article index at /members_only_articles.'''
+        with app.test_client() as client:
+    
+            client.get('/clear')
+    
+            user = User.query.first()
+            client.post('/login', json={
+                'username': user.username
+            })
+    
+            response = client.get('/members_only_articles')
+            assert(response.status_code == 200)
+    
+            client.delete('/logout')
+    
+            response = client.get('/members_only_articles')
+&gt;           assert(response.status_code == 401)
+E           assert 200 == 401
+E            +  where 200 = &lt;WrapperTestResponse streamed [200 OK]&gt;.status_code
+
+testing/app_test.py:28: AssertionError</failure></testcase><testcase classname="" name="Flask API in app.py only shows member-only articles at .members_only_articles." time="0.012"><failure message="TypeError: 'NoneType' object is not iterable">self = &lt;app_test.TestApp object at 0x7fbd7216ac40&gt;
+
+    def test_member_only_articles_shows_member_only_articles(self):
+        '''only shows member-only articles at /members_only_articles.'''
+        with app.test_client() as client:
+    
+            client.get('/clear')
+    
+            user = User.query.first()
+            client.post('/login', json={
+                'username': user.username
+            })
+    
+            response_json = client.get('/members_only_articles').get_json()
+&gt;           for article in response_json:
+E           TypeError: 'NoneType' object is not iterable
+
+testing/app_test.py:42: TypeError</failure></testcase><testcase classname="" name="Flask API in app.py allows logged in users to access full member-only articles at .members_only_articles.&lt;int:id&gt;." time="0.014"><failure message="assert 200 == 401&#10; +  where 200 = &lt;WrapperTestResponse streamed [200 OK]&gt;.status_code">self = &lt;app_test.TestApp object at 0x7fbd7216af70&gt;
+
+    def test_can_only_access_member_only_article_while_logged_in(self):
+        '''allows logged in users to access full member-only articles at /members_only_articles/&lt;int:id&gt;.'''
+        with app.test_client() as client:
+    
+            client.get('/clear')
+    
+            user = User.query.first()
+            client.post('/login', json={
+                'username': user.username
+            })
+    
+            article_id = Article.query.with_entities(Article.id).first()[0]
+    
+            response = client.get(f'/members_only_articles/{article_id}')
+            assert(response.status_code == 200)
+    
+            client.delete('/logout')
+    
+            response = client.get(f'/members_only_articles/{article_id}')
+&gt;           assert(response.status_code == 401)
+E           assert 200 == 401
+E            +  where 200 = &lt;WrapperTestResponse streamed [200 OK]&gt;.status_code
+
+testing/app_test.py:64: AssertionError</failure></testcase></testsuite></testsuites>
